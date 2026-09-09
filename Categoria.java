@@ -1,5 +1,3 @@
-package com.tiendazapatos.model;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -10,11 +8,18 @@ public class Categoria {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, length = 50)
     private String nombre;
 
+    @Column(length = 150)
     private String descripcion;
 
     public Categoria() {
+    }
+
+    public Categoria(String nombre, String descripcion) {
+        this.nombre = nombre;
+        this.descripcion = descripcion;
     }
 
     public Long getId() {
