@@ -44,4 +44,4 @@ public class VentaController {
     public void eliminarVenta(@PathVariable Long id) {
         ventaRepository.deleteById(id);
     }
-}
+}ñ-ñÑñ:ÑLPOLÑ_ÑÑÑL_:ÑLÑ;
