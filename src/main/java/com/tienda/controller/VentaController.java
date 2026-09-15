@@ -1,7 +1,7 @@
-package com.tiendazapatos.controller;
+package com.tienda.controller;
 
-import com.tiendazapatos.model.Venta;
-import com.tiendazapatos.repository.VentaRepository;
+import com.tienda.model.Venta;
+import com.tienda.repository.VentaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
