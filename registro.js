@@ -1,7 +1,7 @@
-document.getElementById('boton-ingresar')?.addEventListener('click', async () => {
-    const usuario = document.getElementById('campo-usuario').value.trim();
-    const contrasena = document.getElementById('campo-clave').value;
-    const mensajeEstado = document.getElementById('mensaje-estado');
+document.getElementById('boton-registrar')?.addEventListener('click', async () => {
+    const usuario = document.getElementById('campo-nuevo-usuario').value.trim();
+    const contrasena = document.getElementById('campo-nueva-clave').value;
+    const mensajeEstado = document.getElementById('mensaje-estado-registro');
 
     mensajeEstado.textContent = '';
     mensajeEstado.className = 'mensaje-alerta';
@@ -13,7 +13,7 @@ document.getElementById('boton-ingresar')?.addEventListener('click', async () =>
     }
 
     try {
-        const respuesta = await fetch('/api/auth/login', {
+        const respuesta = await fetch('/api/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
@@ -25,16 +25,14 @@ document.getElementById('boton-ingresar')?.addEventListener('click', async () =>
         const resultado = await respuesta.json();
 
         if (respuesta.ok) {
-            mensajeEstado.textContent = resultado.message || 'Ingreso exitoso';
+            mensajeEstado.textContent = 'Registro exitoso. Redirigiendo...';
             mensajeEstado.classList.add('mensaje-exito');
             
-            localStorage.setItem('usuario_activo', usuario);
-            
             setTimeout(() => {
-                window.location.href = 'Pagina1.html';
-            }, 1000);
+                window.location.href = 'login.html';
+            }, 1200);
         } else {
-            mensajeEstado.textContent = resultado.error || 'Credenciales incorrectas';
+            mensajeEstado.textContent = resultado.error || 'No se pudo completar el registro';
             mensajeEstado.classList.add('mensaje-error');
         }
     } catch (error) {
