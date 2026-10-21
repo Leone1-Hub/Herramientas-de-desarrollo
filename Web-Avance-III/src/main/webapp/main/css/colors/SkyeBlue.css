@@ -1,0 +1,220 @@
+
+:root{
+    --MediumBlue:#2b7be2;
+    --inter-font:"Arial", Helvetica, sans-serif;
+    --white:#ffff;
+    --black: #040404;
+    --Red:#cf2a27;
+    --Skyeblue:#00ffff;
+    --inter-font-calibri:"Calibri", Helvetica, sans-serif;
+}
+
+header{
+    background: var(--white);
+    margin: 0;
+    top: 0;
+    left: 0;
+    position: fixed;
+    width: 100%;
+    padding: 7px;
+    color: var(--black);
+    border: 3px solid var(--black);
+    text-align: left;
+    display: flex;  
+}
+
+.label, .label2{
+    font-family: var(--inter-font);
+    font-weight: bold;
+    margin-right: 26px;
+    font-size: 14px;
+}
+
+.Registrate:hover{
+    color: var(--Red);
+}
+
+.Iniciar:hover{
+    color: var(--black);
+}
+
+.RecuperarCon:hover{
+    color: var(--black);
+}
+
+body{
+    font-family: var(--inter-font);
+    color: var(--white);
+    background-color: var(--MediumBlue);
+    text-align: center;
+    font-size: 10px;
+    padding: auto;
+    overflow: hidden;
+    white-space: nowrap;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+}
+
+main{
+    color: var(--black);
+    text-align: center;
+    font-weight: bold;
+    font-size: 11px; 
+    overflow: hidden;
+    padding: auto;
+    white-space: nowrap;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+}
+
+.Olvidaste{
+    color: var(--white);
+    text-align: center;
+    margin-left: 150px;
+}
+
+.Logeo{
+    font-size: 44px;
+}
+
+.InputCod, .InputCon{
+    width: 280px;
+    height: 20px;
+    border: 2px solid;
+    border-radius: 4px;
+}
+
+.InputCod2, .InputCon2{
+    width: 370px;
+    height: 20px;
+    border: 2px solid;
+    border-radius: 4px;
+} 
+
+.RecuperarCon{
+    background: var(--Red);
+    color:var(--white);
+    border-radius: var(--black);
+    text-align: center;
+    cursor: pointer;
+    width: 200px;
+    height: 30px;  
+}
+
+.RecuperarCon2{
+    background: var(--Red);
+    color:var(--white);
+    border-radius: var(--black);
+    text-align: center;
+    cursor: pointer;
+    width: 150px;
+    height: 30px;  
+}
+
+.Olvidaste{
+    margin-left: 150px;
+}
+
+.Olvide{
+    font-size: 45px;
+    font-family: var(--inter-font-calibri);
+}
+
+.Correo{
+    color: var(--white);
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+    text-align: left;
+    margin-left: 260px;
+}
+
+.Iniciar {
+    background: var(--Red);
+    color:var(--white);
+    border-radius: var(--black);
+    text-align: center;
+    cursor: pointer;
+    width: 100px;
+    height: 30px;  
+}
+
+.Registrate{
+    background-color: var(--Skyeblue);
+    border-radius: var(--black);
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+    width: 120px;
+    height: 30px;
+}
+
+.CerrarSesion{
+    font-weight: bold;
+    text-align: right;
+    font-size: 14px;
+    margin-left: 640px;
+}
+
+.labelTex{
+    text-align: left;
+    font-size: 10px;
+}
+
+.CorreoInput{
+    font-weight: bold; 
+    font-size: 14px;
+}
+
+.CorreoDoc{
+    font-weight: bold; 
+    font-size: 14px;
+}
+
+form{
+    background-color: var(--white);
+    color: var(--black);
+    font-family: var(--inter-font);
+    padding: 1.6rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px var(--black);
+    max-width: 520px;
+    margin: auto;
+    text-align: justify;
+}
+
+@media screen and (max-width: 768px){
+    main{
+        flex-direction: column;
+    } 
+    .submit__container{
+        justify-content: center;
+    }
+    .result{
+        height: auto;
+        max-width: 624px;
+        margin-top: 2rem;
+        min-height: 186px;
+    } 
+    .header img{
+        width: 72px;
+    }
+    .result__img{
+        display: none;
+    }
+}
+
+  @keyframes l6-0{
+    50% { background-position: left,right,bottom -2px left -4px}
+  }
+
+  @keyframes l6-1{
+    0%,27%   {bottom: calc(50% + 4px)}
+    65%,100% {bottom: calc(50% + 4.1px)}
+  }
+
+  @keyframes l6-2{
+    100% {left:100%}
+  }

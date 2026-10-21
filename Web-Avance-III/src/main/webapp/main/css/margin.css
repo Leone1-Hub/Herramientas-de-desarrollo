@@ -1,0 +1,244 @@
+.Contra{
+    margin-left: 80px; 
+    font-weight: bold; 
+    font-size: 25px;
+}
+
+.InputCon{
+    margin-left: 40px; 
+    margin-top: 20px;
+}
+
+.InputCon2{
+    margin-left: 10px;
+}
+
+.label{
+    color: black; 
+    text-align: right;
+    font-weight: bold; 
+    font-size: 18px;
+}
+
+.labelPersonalizado{
+    color: black; 
+    text-align: right;
+    font-weight: bold; 
+    font-size: 18px;
+    margin-right: 20px;
+}
+
+.Confirmar{
+    font-weight: bold; 
+    font-size: 14px;
+}
+
+.Documento{
+    min-width: 20px;
+    width: 120px;
+}
+
+.card-title {
+    margin-left: 0; 
+    padding-left: 0; 
+}
+
+.InputNacionalidad{
+    margin-bottom: 20px;
+}
+
+#document-type{
+    width: 23%;
+}
+
+.InputDerecho{
+    margin-left: 162px;
+}
+
+.LabelProvincia{
+    margin-left: 252px;
+}
+
+.labelDireccion{
+    margin-left: 313px;
+}
+
+.InputDerechoDate{
+    margin-left: 162px;
+    width: 23%;
+}
+
+/* Estilos generales */
+.InputDerecho {
+    margin-left: 162px; /* Ajuste original para pantallas grandes */
+    display: inline-block;
+}
+
+.InputDerechoDate {
+    margin-left: 162px; /* Ajuste original para pantallas grandes */
+    width: 23%; /* Ancho específico */
+}
+
+.InputNacionalidad {
+    margin-bottom: 20px;
+}
+
+#document-type {
+    width: 23%;
+}
+
+.labelPersonalizado {
+    color: black;
+    text-align: right;
+    font-weight: bold;
+    font-size: 18px;
+    margin-right: 20px;
+}
+
+/* Media queries */
+@media (max-width: 768px) {
+    /* Ajustamos las etiquetas y los inputs para que se apilen verticalmente */
+    .card-body input,
+    .card-body select {
+        width: 100%; /* Hacer que los inputs ocupen todo el ancho disponible */
+        margin-bottom: 10px; /* Espaciado entre inputs */
+        margin-left: 0; /* Eliminamos los márgenes a la izquierda */
+    }
+
+    .card-body label {
+        font-size: 14px; /* Ajustamos el tamaño de la fuente para las pantallas pequeñas */
+        text-align: left; /* Alineamos las etiquetas a la izquierda */
+        margin-right: 0; /* Eliminamos los márgenes a la derecha */
+        width: 100%; /* Aseguramos que las etiquetas ocupen todo el ancho disponible */
+    }
+
+    /* Cambiar el diseño de los botones */
+    .buttons button {
+        width: 100%; /* Botones ocupando todo el ancho */
+        margin-left: 0;
+        margin-right: 0;
+        margin-top: 15px;
+    }
+
+    /* Ajustar márgenes de las clases InputDerecho */
+    .InputDerecho {
+        width: 100%; /* Los inputs ocupan todo el ancho disponible */
+        margin-left: 0;
+    }
+
+    /* Ajuste para campos de tipo "fecha" */
+    .InputDerechoDate {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    /* Ajustar la alineación de los campos para que queden centrados y debajo de sus etiquetas */
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    /* Aseguramos que el grupo de radio buttons también se apile verticalmente */
+    .radio-group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    /* Aseguramos que los inputs con radios se alineen bien */
+    .radio-group input {
+        margin-left: 0;
+    }
+}
+
+    /*Panel de los Productos*/
+    .product-panel {
+    position: fixed;
+    top: 0;
+    right: -350px;
+    width: 300px;
+    height: 100%;
+    background-color: #fff;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+    transition: right 0.3s ease;
+    z-index: 9999;
+    padding: 20px;
+    text-align: center;
+    font-size: 20px;
+    gap: 10px;
+    }
+
+    #panel-brand-logo {
+    display: block;
+    margin: 0 auto 10px auto;
+    max-width: 100px;
+    }
+
+    .product-panel.open {
+        right: 0;
+    }
+
+    .product-panel-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .close-btn {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+        cursor: pointer;
+        align-self: flex-end;
+    }
+
+
+
+@media (max-width: 480px) {
+    /* Para pantallas aún más pequeñas, hacemos algunos ajustes adicionales */
+    .InputDerecho {
+        width: 100%;
+    }
+
+    .InputDerechoDate {
+        width: 100%;
+    }
+
+    /* Ajuste para márgenes en el contenedor de botones */
+    .buttons button {
+        width: 100%;
+    }
+
+    /* Ajustes específicos en la barra de navegación */
+    .navbar-header img {
+        width: 50%;
+    }
+
+    .user-profile img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .navbar-collapse .ml-auto {
+        margin-left: 0;
+    }
+
+    /* Cambios en los márgenes y tamaños de las etiquetas */
+    .labelPaterno,
+    .labelDocumento,
+    .labelSexo,
+    .labelTelefonito {
+        font-size: 12px;
+    }
+
+    .card-title {
+        font-size: 16px;
+    }
+
+    .label {
+        font-size: 14px;
+    }
+
+    /* Ajustes de la columna */
+    .col-md-12 {
+        padding: 10px;
+    }
+}
