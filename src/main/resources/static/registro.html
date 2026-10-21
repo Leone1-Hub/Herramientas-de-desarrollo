@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Cuenta - Tienda Alimentos</title>
+    <link rel="stylesheet" href="eregistro.css">
+</head>
+<body>
+    <main class="tarjeta-formulario">
+        <h2 class="titulo-formulario">Crear Cuenta</h2>
+        
+        <label for="campo-nuevo-usuario" class="etiqueta-formulario">Usuario</label>
+        <input type="text" id="campo-nuevo-usuario" class="entrada-formulario" placeholder="Crea un nombre de usuario">
+        
+        <label for="campo-nueva-clave" class="etiqueta-formulario">Contraseña</label>
+        <input type="password" id="campo-nueva-clave" class="entrada-formulario" placeholder="Crea una contraseña">
+        
+        <button type="button" id="boton-registrar" class="boton-formulario">Registrar</button>
+        
+        <div id="mensaje-estado-registro" class="mensaje-alerta"></div>
+        
+        <footer class="pie-formulario">
+            <span>¿Ya tienes cuenta?</span>
+            <a href="login.html" class="enlace-redireccion">Inicia sesión</a>
+        </footer>
+    </main>
+
+    <script src="registro.js"></script>
+</body>
+</html>
