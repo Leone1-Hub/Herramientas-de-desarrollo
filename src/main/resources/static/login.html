@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Tienda Alimentos</title>
+    <link rel="stylesheet" href="elogin.css">
+</head>
+<body>
+    <main class="tarjeta-formulario">
+        <h2 class="titulo-formulario">Iniciar Sesión</h2>
+        
+        <label for="campo-usuario" class="etiqueta-formulario">Usuario</label>
+        <input type="text" id="campo-usuario" class="entrada-formulario" placeholder="Ingresa tu usuario">
+        
+        <label for="campo-clave" class="etiqueta-formulario">Contraseña</label>
+        <input type="password" id="campo-clave" class="entrada-formulario" placeholder="Ingresa tu contraseña">
+        
+        <button type="button" id="boton-ingresar" class="boton-formulario">Ingresar</button>
+        
+        <div id="mensaje-estado" class="mensaje-alerta"></div>
+        
+        <footer class="pie-formulario">
+            <span>¿No tienes cuenta?</span>
+            <a href="registro.html" class="enlace-redireccion">Regístrate aquí</a>
+        </footer>
+    </main>
+
+    <script src="login.js"></script>
+</body>
+</html>
