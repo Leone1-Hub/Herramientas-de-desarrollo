@@ -48,6 +48,11 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- Encriptación BCrypt sin activar filtros estrictos de Spring Security -->
+    <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-crypto</artifactId>
+    </dependency>
     </dependencies>
 
     <build>
