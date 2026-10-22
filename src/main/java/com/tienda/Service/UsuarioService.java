@@ -20,7 +20,7 @@ public class UsuarioService {
     }
 
     public Usuario registrar(Usuario usuario) {
-        // Validar unicidad
+        // Validar usuario
         if (usuarioRepository.existsByUsername(usuario.getUsername())) {
             throw new IllegalArgumentException("El nombre de usuario ya está registrado.");
         }
@@ -28,7 +28,7 @@ public class UsuarioService {
             throw new IllegalArgumentException("El correo electrónico ya está registrado.");
         }
 
-        // Normalizar y validar rol
+        // validamos rol
         if (usuario.getRol() == null || usuario.getRol().trim().isEmpty()) {
             usuario.setRol("CAJERO"); // Rol por defecto
         } else {

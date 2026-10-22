@@ -1,42 +1,49 @@
-document.getElementById('boton-registrar')?.addEventListener('click', async () => {
-    const usuario = document.getElementById('campo-nuevo-usuario').value.trim();
-    const contrasena = document.getElementById('campo-nueva-clave').value;
-    const mensajeEstado = document.getElementById('mensaje-estado-registro');
+document.getElementById('formulario-registro').addEventListener('submit', async (evento) => {
+    evento.preventDefault();
 
-    mensajeEstado.textContent = '';
-    mensajeEstado.className = 'mensaje-alerta';
+    const nombre = document.getElementById('campo-nombre').value.trim();
+    const username = document.getElementById('campo-usuario').value.trim();
+    const email = document.getElementById('campo-correo').value.trim();
+    const telefono = document.getElementById('campo-telefono').value.trim();
+    const password = document.getElementById('campo-clave').value.trim();
+    const rol = document.getElementById('campo-rol').value;
 
-    if (!usuario || !contrasena) {
-        mensajeEstado.textContent = 'Por favor completa todos los campos';
-        mensajeEstado.classList.add('mensaje-error');
-        return;
-    }
+    const mensajeAlerta = document.getElementById('mensaje-estado-registro');
+    mensajeAlerta.className = 'mensaje-alerta';
+    mensajeAlerta.textContent = '';
+
+    const nuevoUsuario = {
+        nombre: nombre,
+        username: username,
+        email: email,
+        telefono: telefono,
+        password: password,
+        rol: rol
+    };
 
     try {
-        const respuesta = await fetch('/api/auth/register', {
+        const respuesta = await fetch('/api/auth/registro', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                username: usuario, 
-                password: contrasena 
-            })
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(nuevoUsuario)
         });
 
         const resultado = await respuesta.json();
 
         if (respuesta.ok) {
-            mensajeEstado.textContent = 'Registro exitoso. Redirigiendo...';
-            mensajeEstado.classList.add('mensaje-exito');
-            
+            mensajeAlerta.className = 'mensaje-alerta mensaje-exito';
+            mensajeAlerta.textContent = '¡Usuario creado con éxito! Redirigiendo al login...';
             setTimeout(() => {
                 window.location.href = 'login.html';
             }, 1200);
         } else {
-            mensajeEstado.textContent = resultado.error || 'No se pudo completar el registro';
-            mensajeEstado.classList.add('mensaje-error');
+            mensajeAlerta.className = 'mensaje-alerta mensaje-error';
+            mensajeAlerta.textContent = resultado.error || 'No se pudo completar el registro.';
         }
     } catch (error) {
-        mensajeEstado.textContent = 'Error al conectar con el servidor';
-        mensajeEstado.classList.add('mensaje-error');
+        mensajeAlerta.className = 'mensaje-alerta mensaje-error';
+        mensajeAlerta.textContent = 'Error de comunicación con el servidor.';
     }
 });

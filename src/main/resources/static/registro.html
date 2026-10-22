@@ -3,26 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Cuenta - Tienda Alimentos</title>
+    <title>Registro - Tienda de Abarrotes</title>
     <link rel="stylesheet" href="eregistro.css">
 </head>
-<body>
-    <main class="tarjeta-formulario">
+<body class="cuerpo-pagina">
+    <main class="contenedor-formulario">
         <h2 class="titulo-formulario">Crear Cuenta</h2>
         
-        <label for="campo-nuevo-usuario" class="etiqueta-formulario">Usuario</label>
-        <input type="text" id="campo-nuevo-usuario" class="entrada-formulario" placeholder="Crea un nombre de usuario">
-        
-        <label for="campo-nueva-clave" class="etiqueta-formulario">Contraseña</label>
-        <input type="password" id="campo-nueva-clave" class="entrada-formulario" placeholder="Crea una contraseña">
-        
-        <button type="button" id="boton-registrar" class="boton-formulario">Registrar</button>
-        
+        <form id="formulario-registro" class="formulario">
+            <div class="grupo-campo">
+                <label for="campo-nombre" class="etiqueta-campo">Nombre Completo</label>
+                <input type="text" id="campo-nombre" class="entrada-texto" placeholder="Ingresa tu nombre" required>
+            </div>
+
+            <div class="grupo-campo">
+                <label for="campo-usuario" class="etiqueta-campo">Usuario</label>
+                <input type="text" id="campo-usuario" class="entrada-texto" placeholder="Crea un nombre de usuario" required>
+            </div>
+
+            <div class="grupo-campo">
+                <label for="campo-correo" class="etiqueta-campo">Correo Electrónico</label>
+                <input type="email" id="campo-correo" class="entrada-texto" placeholder="correo@ejemplo.com" required>
+            </div>
+
+            <div class="grupo-campo">
+                <label for="campo-telefono" class="etiqueta-campo">Teléfono</label>
+                <input type="tel" id="campo-telefono" class="entrada-texto" placeholder="999888777">
+            </div>
+
+            <div class="grupo-campo">
+                <label for="campo-clave" class="etiqueta-campo">Contraseña</label>
+                <input type="password" id="campo-clave" class="entrada-texto" placeholder="Crea tu contraseña" required>
+            </div>
+
+            <div class="grupo-campo">
+                <label for="campo-rol" class="etiqueta-campo">Rol Asignado</label>
+                <select id="campo-rol" class="entrada-seleccion">
+                    <option value="CAJERO">Cajero</option>
+                    <option value="ADMINISTRADOR">Administrador</option>
+                </select>
+            </div>
+
+            <button type="submit" id="boton-registro" class="boton-accion">Registrar Usuario</button>
+        </form>
+
         <div id="mensaje-estado-registro" class="mensaje-alerta"></div>
-        
+
         <footer class="pie-formulario">
-            <span>¿Ya tienes cuenta?</span>
-            <a href="login.html" class="enlace-redireccion">Inicia sesión</a>
+            <span>¿Ya tienes una cuenta registrada?</span>
+            <a href="login.html" class="enlace-redireccion">Iniciar Sesión</a>
         </footer>
     </main>
 
