@@ -1,7 +1,7 @@
 package com.tienda.controller;
 
 import com.tienda.model.Cliente;
-import com.tienda.service.ClienteService;
+import com.tienda.Service.ClienteService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
