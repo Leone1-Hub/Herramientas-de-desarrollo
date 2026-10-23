@@ -6,6 +6,7 @@ import com.tienda.Service.ClienteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -33,8 +34,9 @@ public class ClienteController {
     }
 
     @PostMapping
-    public Cliente guardar(@RequestBody Cliente cliente) {
-        return service.guardar(cliente);
+    public ResponseEntity<Cliente> guardar(@RequestBody Cliente cliente) {
+        Cliente nuevo = service.crear(cliente);
+        return ResponseEntity.created(URI.create("/api/clientes/" + nuevo.getId())).body(nuevo);
     }
 
     @PutMapping("/{id}")
@@ -42,19 +44,7 @@ public class ClienteController {
             @PathVariable Long id,
             @RequestBody Cliente cliente) {
 
-        return service.buscarPorId(id)
-                .map(c -> {
-
-                    c.setNombre(cliente.getNombre());
-                    c.setApellido(cliente.getApellido());
-                    c.setDni(cliente.getDni());
-                    c.setTelefono(cliente.getTelefono());
-                    c.setCorreo(cliente.getCorreo());
-
-                    return ResponseEntity.ok(service.guardar(c));
-
-                })
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(service.actualizar(id, cliente));
     }
 
     @DeleteMapping("/{id}")
