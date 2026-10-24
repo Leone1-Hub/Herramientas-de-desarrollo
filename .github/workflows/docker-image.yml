@@ -5,6 +5,8 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
+  # Boton "Run workflow" en la pestana Actions de GitHub
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
@@ -102,22 +104,37 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
 
+  # Despliega en la PC con el runner self-hosted (Windows + Docker Desktop):
+  # descarga la imagen recien publicada y reemplaza el contenedor "tienda".
   deploy:
     runs-on: self-hosted
     needs: package
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/master' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    concurrency: deploy-tienda
+    permissions:
+      contents: read
+      packages: read
+    env:
+      IMAGE: ghcr.io/leone1-hub/herramientas-de-desarrollo
+    defaults:
+      run:
+        shell: cmd
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Compute image name
-        id: img
-        run: echo "name=${{ env.REGISTRY }}/$(echo '${{ env.IMAGE_NAME }}' | tr '[:upper:]' '[:lower:]'):${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
-
-      - name: Apply manifests
+      - name: Descargar la imagen nueva
         run: |
-          sed "s|IMAGE_PLACEHOLDER|${{ steps.img.outputs.name }}|" k8s/deployment.yaml | kubectl --context docker-desktop apply -f -
-          kubectl --context docker-desktop apply -f k8s/service.yaml
+          echo ${{ secrets.GITHUB_TOKEN }}| docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker pull %IMAGE%:%GITHUB_SHA:~0,7% || exit /b 1
 
-      - name: Wait for rollout
-        run: kubectl --context docker-desktop rollout status deployment/demo --timeout=180s
+      - name: Reemplazar el contenedor
+        run: |
+          docker rm -f tienda 2>nul
+          docker run -d --name tienda --restart unless-stopped -p 8080:8080 -e SPRING_PROFILES_ACTIVE=h2 %IMAGE%:%GITHUB_SHA:~0,7% || exit /b 1
+
+      - name: Verificar que la API responde
+        run: |
+          for /L %%i in (1,1,40) do (
+            curl -s -o nul -w "%%{http_code}" http://localhost:8080/api/productos | findstr /x 200 >nul && (echo API arriba en http://localhost:8080 & exit /b 0)
+            ping -n 4 127.0.0.1 >nul
+          )
+          docker logs --tail 50 tienda
+          exit /b 1
