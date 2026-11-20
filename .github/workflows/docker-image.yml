@@ -152,10 +152,11 @@ jobs:
           docker rm -f tienda 2>nul
           docker run -d --name tienda --restart unless-stopped -p 8080:8080 -e SPRING_PROFILES_ACTIVE=h2 %IMAGE%:%GITHUB_SHA:~0,7% || exit /b 1
 
-      - name: Verificar que la API responde
+      - name: Verificar API y base de datos (login del admin)
         run: |
+          echo {"username":"admin","password":"Admin123"}> "%TEMP%\login-deploy.json"
           for /L %%i in (1,1,40) do (
-            curl -s -o nul -w "%%{http_code}" http://localhost:8080/api/productos | findstr /x 200 >nul && (echo API arriba en http://localhost:8080 & exit /b 0)
+            curl -s -o nul -w "%%{http_code}" -H "Content-Type: application/json" -d @"%TEMP%\login-deploy.json" http://localhost:8080/api/auth/login | findstr /x 200 >nul && (echo API y BD operativas en http://localhost:8080 & exit /b 0)
             ping -n 4 127.0.0.1 >nul
           )
           docker logs --tail 50 tienda
