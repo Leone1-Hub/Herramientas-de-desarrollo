@@ -1,6 +1,7 @@
 package com.tienda.controller;
 
 import com.tienda.Service.JwtService;
+import com.tienda.dto.Peticiones.RegistroRequest;
 import com.tienda.Service.UsuarioService;
 import com.tienda.dto.LoginResponse;
 import com.tienda.model.Usuario;
@@ -26,8 +27,8 @@ public class UsuarioController {
     private final JwtService jwtService;
 
     @PostMapping("/registro")
-    public ResponseEntity<?> registrar(@RequestBody Usuario usuario) {
-        Usuario nuevoUsuario = usuarioService.registrar(usuario);
+    public ResponseEntity<?> registrar(@RequestBody RegistroRequest usuario) {
+        Usuario nuevoUsuario = usuarioService.registrar(usuario.aEntidad());
 
         Map<String, Object> response = new HashMap<>();
         response.put("mensaje", "Usuario registrado exitosamente");

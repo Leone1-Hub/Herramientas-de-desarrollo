@@ -2,6 +2,7 @@
 package com.tienda.controller;
 
 import com.tienda.Service.ProductoService;
+import com.tienda.dto.Peticiones.ProductoRequest;
 import com.tienda.model.Producto;
 
 import org.springframework.http.ResponseEntity;
@@ -41,10 +42,10 @@ public class ProductoController {
     // 3. REGISTRAR UN NUEVO PRODUCTO
     @PostMapping
     public ResponseEntity<Producto> crearProducto(
-            @RequestBody Producto producto) {
+            @RequestBody ProductoRequest producto) {
 
         Producto nuevoProducto =
-                productoService.crearProducto(producto);
+                productoService.crearProducto(producto.aEntidad());
 
         URI ubicacion = URI.create(
                 "/api/productos/" + nuevoProducto.getId()
@@ -59,10 +60,10 @@ public class ProductoController {
     @PutMapping("/{id}")
     public ResponseEntity<Producto> actualizarProducto(
             @PathVariable("id") Long id,
-            @RequestBody Producto producto) {
+            @RequestBody ProductoRequest producto) {
 
         Producto productoActualizado =
-                productoService.actualizarProducto(id, producto);
+                productoService.actualizarProducto(id, producto.aEntidad());
 
         return ResponseEntity.ok(productoActualizado);
     }
