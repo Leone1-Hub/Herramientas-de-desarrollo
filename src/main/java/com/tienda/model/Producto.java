@@ -1,7 +1,7 @@
-
 package com.tienda.model;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "productos")
@@ -16,8 +16,8 @@ public class Producto {
 
     private String categoria;
 
-    @Column(nullable = false)
-    private Double precio;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal precio;
 
     @Column(nullable = false)
     private int stock;
@@ -26,7 +26,7 @@ public class Producto {
     }
 
     public Producto(String nombre, String categoria,
-                    Double precio, int stock) {
+                    BigDecimal precio, int stock) {
         this.nombre = nombre;
         this.categoria = categoria;
         this.precio = precio;
@@ -57,11 +57,11 @@ public class Producto {
         this.categoria = categoria;
     }
 
-    public Double getPrecio() {
+    public BigDecimal getPrecio() {
         return precio;
     }
 
-    public void setPrecio(Double precio) {
+    public void setPrecio(BigDecimal precio) {
         this.precio = precio;
     }
 

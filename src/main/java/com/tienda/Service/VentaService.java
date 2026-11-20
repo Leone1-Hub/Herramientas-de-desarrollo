@@ -59,7 +59,7 @@ public class VentaService {
                         .formatted(producto.getNombre(), producto.getStock(), cantidad));
             }
             producto.setStock(producto.getStock() - cantidad);
-            BigDecimal precio = BigDecimal.valueOf(producto.getPrecio()).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal precio = producto.getPrecio().setScale(2, RoundingMode.HALF_UP);
             venta.agregarDetalle(new DetalleVenta(producto, cantidad, precio));
         });
 
