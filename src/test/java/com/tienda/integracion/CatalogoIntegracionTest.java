@@ -62,7 +62,8 @@ class CatalogoIntegracionTest {
                         .content("{\"nombre\":\"Luis\",\"apellido\":\"Ramos Díaz\",\"dni\":\"70999888\"}"))
                 .andExpect(jsonPath("$.apellido").value("Ramos Díaz"));
         mvc.perform(delete("/api/clientes/" + id).with(ADMIN)).andExpect(status().isNoContent());
-        mvc.perform(get("/api/clientes/" + id).with(ADMIN)).andExpect(status().isNotFound());
+        mvc.perform(get("/api/clientes/" + id).with(ADMIN)).andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.detail").value("Cliente con id " + id + " no existe"));
     }
 
     @Test
@@ -79,8 +80,12 @@ class CatalogoIntegracionTest {
                 .andExpect(jsonPath("$.descripcion").value("Dulces y chocolates"));
         mvc.perform(put("/api/categorias/999999").with(ADMIN).contentType(MediaType.APPLICATION_JSON)
                         .content("{\"nombre\":\"Nada\"}"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.detail").exists());
+        mvc.perform(get("/api/categorias/999999").with(ADMIN)).andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.detail").value("La categoría con ID 999999 no existe."));
         mvc.perform(delete("/api/categorias/" + id).with(ADMIN)).andExpect(status().isNoContent());
-        mvc.perform(delete("/api/categorias/" + id).with(ADMIN)).andExpect(status().isNotFound());
+        mvc.perform(delete("/api/categorias/" + id).with(ADMIN)).andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.detail").exists());
     }
 }

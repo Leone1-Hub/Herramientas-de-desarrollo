@@ -4,8 +4,10 @@ import com.tienda.Service.ClienteService;
 import com.tienda.dto.Peticiones.ClienteRequest;
 import com.tienda.model.Cliente;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.util.List;
@@ -26,7 +28,7 @@ public class ClienteController {
     public ResponseEntity<Cliente> buscar(@PathVariable Long id) {
         return service.buscarPorId(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente con id " + id + " no existe"));
     }
 
     @PostMapping
