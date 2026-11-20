@@ -28,6 +28,9 @@ document.getElementById('formulario-login').addEventListener('submit', async (ev
             mensajeAlerta.className = 'mensaje-alerta mensaje-exito';
             mensajeAlerta.textContent = 'Acceso correcto. Redirigiendo...';
 
+            // Guardar token JWT en el navegador
+            localStorage.setItem('accessToken', resultado.accessToken);
+
             // Guardar información de la sesión en el navegador
             localStorage.setItem('usuarioSesion', JSON.stringify({
                 idUsuario: resultado.idUsuario,
