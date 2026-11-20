@@ -14,7 +14,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UsuarioService {
 
-    private static final String FORMATO_EMAIL = "^[\\w.+-]+@[\\w-]+(\\.[\\w-]+)+$";
+    private static final String FORMATO_EMAIL = "^[\\w.+-]++@[\\w-]++(?:\\.[\\w-]++)++$";
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;

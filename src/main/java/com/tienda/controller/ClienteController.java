@@ -2,6 +2,7 @@ package com.tienda.controller;
 
 import com.tienda.model.Cliente;
 import com.tienda.Service.ClienteService;
+import com.tienda.dto.Peticiones.ClienteRequest;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,8 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/clientes")
-@CrossOrigin(origins = "*")
-
 public class ClienteController {
     private final ClienteService service;
 
@@ -34,17 +33,17 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ResponseEntity<Cliente> guardar(@RequestBody Cliente cliente) {
-        Cliente nuevo = service.crear(cliente);
+    public ResponseEntity<Cliente> guardar(@RequestBody ClienteRequest cliente) {
+        Cliente nuevo = service.crear(cliente.aEntidad());
         return ResponseEntity.created(URI.create("/api/clientes/" + nuevo.getId())).body(nuevo);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Cliente> actualizar(
             @PathVariable Long id,
-            @RequestBody Cliente cliente) {
+            @RequestBody ClienteRequest cliente) {
 
-        return ResponseEntity.ok(service.actualizar(id, cliente));
+        return ResponseEntity.ok(service.actualizar(id, cliente.aEntidad()));
     }
 
     @DeleteMapping("/{id}")
