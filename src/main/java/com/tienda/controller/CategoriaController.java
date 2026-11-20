@@ -2,6 +2,7 @@ package com.tienda.controller;
 
 import com.tienda.model.Categoria;
 import com.tienda.Service.CategoriaService;
+import com.tienda.dto.Peticiones.CategoriaRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,7 +43,7 @@ public class CategoriaController {
     @PutMapping("/{id}")
     public ResponseEntity<Categoria> actualizarCategoria(
             @PathVariable Long id,
-            @RequestBody Categoria categoria) {
+            @RequestBody CategoriaRequest categoria) {
 
         Categoria categoriaActualizada = categoriaService.actualizarCategoria(id, categoria);
         if (categoriaActualizada == null) {
