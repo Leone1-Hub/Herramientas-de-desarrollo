@@ -5,9 +5,11 @@ import com.tienda.model.Cliente;
 import com.tienda.model.Producto;
 import com.tienda.model.Usuario;
 
+import java.math.BigDecimal;
+
 public interface Peticiones {
 
-    record ProductoRequest(String nombre, String categoria, Double precio, int stock) {
+    record ProductoRequest(String nombre, String categoria, BigDecimal precio, int stock) {
         public Producto aEntidad() { return new Producto(nombre, categoria, precio, stock); }
     }
 

@@ -1,9 +1,9 @@
 package com.tienda.controller;
 
 import com.tienda.Service.JwtService;
-import com.tienda.dto.Peticiones.RegistroRequest;
 import com.tienda.Service.UsuarioService;
 import com.tienda.dto.LoginResponse;
+import com.tienda.dto.Peticiones.RegistroRequest;
 import com.tienda.model.Usuario;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,18 +16,17 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping({"/api/auth", "/api/v1/auth"})
-@CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
     private final JwtService jwtService;
 
     @PostMapping("/registro")
-    public ResponseEntity<?> registrar(@RequestBody RegistroRequest usuario) {
+    public ResponseEntity<Map<String, Object>> registrar(@RequestBody RegistroRequest usuario) {
         Usuario nuevoUsuario = usuarioService.registrar(usuario.aEntidad());
 
         Map<String, Object> response = new HashMap<>();
@@ -48,14 +47,9 @@ public class UsuarioController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Faltan credenciales");
         }
 
-        Optional<Usuario> usuarioAuth = usuarioService.autenticar(username, password);
+        Usuario usuario = usuarioService.autenticar(username, password)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario o contraseña incorrectos, o cuenta inactiva"));
 
-        if (usuarioAuth.isPresent()) {
-            Usuario usuario = usuarioAuth.get();
-            String token = jwtService.generarToken(usuario);
-            return ResponseEntity.ok(LoginResponse.of(token, usuario.getUsername(), usuario.getRol()));
-        } else {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario o contraseña incorrectos, o cuenta inactiva");
-        }
+        return ResponseEntity.ok(LoginResponse.of(jwtService.generarToken(usuario), usuario.getUsername(), usuario.getRol()));
     }
 }
