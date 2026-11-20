@@ -18,13 +18,13 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
-    
+
     public Usuario registrar(Usuario usuario) {
         usuario.setIdUsuario(null);
         validarDatos(usuario);
 
         if (usuarioRepository.existsByUsername(usuario.getUsername())) {
-        throw new RuntimeException("El usuario ya existe");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "El nombre de usuario ya está registrado.");
         }
         if (usuarioRepository.existsByEmail(usuario.getEmail())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "El correo electrónico ya está registrado.");
