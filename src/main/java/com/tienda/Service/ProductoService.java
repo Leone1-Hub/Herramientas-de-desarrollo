@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -89,7 +90,7 @@ public class ProductoService {
         }
 
         if (producto.getPrecio() == null
-                || producto.getPrecio() < 0) {
+                || producto.getPrecio().compareTo(BigDecimal.ZERO) < 0) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "El precio debe ser mayor o igual a cero"
