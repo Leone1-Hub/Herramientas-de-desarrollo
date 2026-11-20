@@ -9,7 +9,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/categorias")
+@RequestMapping({"/api/categorias", "/api/v1/categorias"})
 @CrossOrigin(origins = "*")
 public class CategoriaController {
 
@@ -26,21 +26,16 @@ public class CategoriaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Categoria> buscarPorId(@PathVariable Long id) {
-
         return categoriaService.buscarPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Categoria> crearCategoria(
-            @RequestBody Categoria categoria) {
-
-        Categoria nuevaCategoria =
-                categoriaService.guardarCategoria(categoria);
-
+    public ResponseEntity<Categoria> crearCategoria(@RequestBody Categoria categoria) {
+        Categoria nuevaCategoria = categoriaService.guardarCategoria(categoria);
         return ResponseEntity
-                .created(URI.create("/api/categorias/" + nuevaCategoria.getId()))
+                .created(URI.create("/api/v1/categorias/" + nuevaCategoria.getId()))
                 .body(nuevaCategoria);
     }
 
@@ -49,27 +44,19 @@ public class CategoriaController {
             @PathVariable Long id,
             @RequestBody Categoria categoria) {
 
-        Categoria categoriaActualizada =
-                categoriaService.actualizarCategoria(id, categoria);
-
+        Categoria categoriaActualizada = categoriaService.actualizarCategoria(id, categoria);
         if (categoriaActualizada == null) {
             return ResponseEntity.notFound().build();
         }
-
         return ResponseEntity.ok(categoriaActualizada);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarCategoria(
-            @PathVariable Long id) {
-
-        boolean eliminado =
-                categoriaService.eliminarCategoria(id);
-
+    public ResponseEntity<Void> eliminarCategoria(@PathVariable Long id) {
+        boolean eliminado = categoriaService.eliminarCategoria(id);
         if (!eliminado) {
             return ResponseEntity.notFound().build();
         }
-
         return ResponseEntity.noContent().build();
     }
 }
