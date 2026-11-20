@@ -8,6 +8,7 @@ import com.tienda.model.Usuario;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,14 @@ public class UsuarioController {
 
     private final UsuarioService usuarioService;
     private final JwtService jwtService;
+
+    public UsuarioController(
+            UsuarioService usuarioService,
+            JwtService jwtService) {
+
+        this.usuarioService = usuarioService;
+        this.jwtService = jwtService;
+    }
 
     @PostMapping("/registro")
     public ResponseEntity<?> registrar(@RequestBody RegistroRequest usuario) {

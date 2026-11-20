@@ -71,7 +71,13 @@ public class SecurityConfig {
                                 "/favicon.ico",
                                 "/error"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/registro").permitAll()
+                        .requestMatchers(
+                            HttpMethod.POST,
+                            "/api/auth/login",
+                            "/api/auth/registro",
+                            "/api/v1/auth/login",
+                            "/api/v1/auth/registro"
+                        ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/productos", "/api/productos/**", "/api/categorias", "/api/categorias/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.PUT, "/api/productos", "/api/productos/**", "/api/categorias", "/api/categorias/**").hasRole("ADMINISTRADOR")
@@ -86,8 +92,8 @@ public class SecurityConfig {
                         .accessDeniedHandler(accessDeniedHandler)
                 )
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(authenticationEntryPoint)
-                        .accessDeniedHandler(accessDeniedHandler)
+                .authenticationEntryPoint(authenticationEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler)
                 );
 
         return http.build();

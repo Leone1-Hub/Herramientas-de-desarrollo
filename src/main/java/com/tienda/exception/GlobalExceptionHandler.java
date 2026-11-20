@@ -21,7 +21,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ProblemDetail problema = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Datos inválidos");
         problema.setProperty("errores", ex.getBindingResult().getFieldErrors().stream()
                 .map(f -> f.getField() + ": " + f.getDefaultMessage()).toList());
-        return ResponseEntity.badRequest().body(problema);
+        return handleExceptionInternal(
+            ex,
+            problema,
+            headers,
+            status,
+            request
+        );
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
