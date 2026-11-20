@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/api/ventas")
+@RequestMapping({"/api/ventas", "/api/v1/ventas"})
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class VentaController {
 
@@ -26,7 +27,7 @@ public class VentaController {
     public PagedModel<VentaResponse> listar(@PageableDefault(sort = "fecha", direction = Sort.Direction.DESC) Pageable pageable) {
         return new PagedModel<>(ventaService.listar(pageable));
     }
-
+    
     @GetMapping("/{id}")
     public VentaResponse buscar(@PathVariable Long id) {
         return ventaService.buscar(id);
@@ -35,7 +36,7 @@ public class VentaController {
     @PostMapping
     public ResponseEntity<VentaResponse> registrar(@Valid @RequestBody VentaRequest request) {
         VentaResponse venta = ventaService.registrar(request);
-        return ResponseEntity.created(URI.create("/api/ventas/" + venta.id())).body(venta);
+        return ResponseEntity.created(URI.create("/api/v1/ventas/" + venta.id())).body(venta);
     }
 
     @DeleteMapping("/{id}")
