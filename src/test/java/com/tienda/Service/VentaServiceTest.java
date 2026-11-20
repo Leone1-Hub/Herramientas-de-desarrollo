@@ -35,7 +35,7 @@ class VentaServiceTest {
     @InjectMocks private VentaService ventaService;
 
     private static Producto producto(long id, String nombre, double precio, int stock) {
-        Producto p = new Producto(nombre, "Abarrotes", precio, stock);
+        Producto p = new Producto(nombre, "Abarrotes", BigDecimal.valueOf(precio), stock);
         p.setId(id);
         return p;
     }

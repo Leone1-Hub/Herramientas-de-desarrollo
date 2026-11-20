@@ -17,7 +17,6 @@ import java.net.URI;
 
 @RestController
 @RequestMapping({"/api/ventas", "/api/v1/ventas"})
-@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class VentaController {
 

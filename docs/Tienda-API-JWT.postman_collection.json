@@ -1,0 +1,2088 @@
+{
+ "info": {
+  "name": "Tienda - API completa (JWT)",
+  "description": "Ejecutar con Run collection. La petición 0 inicia sesión como admin y guarda el token; todas las demás lo envían automáticamente (Bearer {{token}}).",
+  "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+ },
+ "item": [
+  {
+   "name": "0. Login",
+   "item": [
+    {
+     "name": "Login administrador (guarda token)",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/auth/login",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"{{adminPassword}}\"\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      },
+      "auth": {
+       "type": "noauth"
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+         "const j = pm.response.json();",
+         "pm.test(\"Devuelve accessToken tipo Bearer\", () => { pm.expect(j.accessToken).to.be.a(\"string\"); pm.expect(j.tokenType).to.eql(\"Bearer\"); });",
+         "pm.test(\"Rol ADMINISTRADOR\", () => pm.expect(j.rol).to.eql(\"ADMINISTRADOR\"));",
+         "pm.collectionVariables.set(\"token\", j.accessToken);"
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "1. Productos",
+   "item": [
+    {
+     "name": "Listar productos",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": "{{baseUrl}}/api/productos",
+      "description": ""
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+         "const j = pm.response.json();",
+         "pm.test(\"Devuelve una lista con productos\", () => pm.expect(j).to.be.an(\"array\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Buscar producto por id",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": "{{baseUrl}}/api/productos/{{productoArroz}}",
+      "description": ""
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+         "const j = pm.response.json();",
+         "pm.test(\"Trae nombre, precio y stock\", () => pm.expect(j).to.have.keys(\"id\",\"nombre\",\"categoria\",\"precio\",\"stock\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Registrar producto",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/productos",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"nombre\": \"Pan de molde Bimbo\",\n  \"categoria\": \"Panadería\",\n  \"precio\": 8.9,\n  \"stock\": 25\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 201\", () => pm.response.to.have.status(201));",
+         "const j = pm.response.json();",
+         "pm.test(\"Asigna un id nuevo\", () => pm.expect(j.id).to.be.a(\"number\"));",
+         "pm.collectionVariables.set(\"productoNuevoId\", j.id);"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Actualizar producto",
+     "request": {
+      "method": "PUT",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/productos/{{productoNuevoId}}",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"nombre\": \"Pan de molde Bimbo\",\n  \"categoria\": \"Panadería\",\n  \"precio\": 9.5,\n  \"stock\": 30\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+         "const j = pm.response.json();",
+         "pm.test(\"Guarda el precio nuevo\", () => pm.expect(j.precio).to.eql(9.5));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Producto sin nombre → 400",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/productos",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"precio\": 1,\n  \"stock\": 1\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 400\", () => pm.response.to.have.status(400));",
+         "pm.test(\"El error explica el motivo\", () => pm.expect(pm.response.json().detail).to.be.a(\"string\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Precio negativo → 400",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/productos",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"nombre\": \"Prueba\",\n  \"precio\": -1,\n  \"stock\": 1\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 400\", () => pm.response.to.have.status(400));",
+         "pm.test(\"El error explica el motivo\", () => pm.expect(pm.response.json().detail).to.be.a(\"string\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Producto inexistente → 404",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": "{{baseUrl}}/api/productos/999999",
+      "description": ""
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 404\", () => pm.response.to.have.status(404));",
+         "pm.test(\"El error explica el motivo\", () => pm.expect(pm.response.json().detail).to.be.a(\"string\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Eliminar producto",
+     "request": {
+      "method": "DELETE",
+      "header": [],
+      "url": "{{baseUrl}}/api/productos/{{productoNuevoId}}",
+      "description": ""
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 204\", () => pm.response.to.have.status(204));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Eliminar producto inexistente → 404",
+     "request": {
+      "method": "DELETE",
+      "header": [],
+      "url": "{{baseUrl}}/api/productos/999999",
+      "description": ""
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 404\", () => pm.response.to.have.status(404));"
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "2. Clientes",
+   "item": [
+    {
+     "name": "Listar clientes",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": "{{baseUrl}}/api/clientes",
+      "description": ""
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+         "const j = pm.response.json();",
+         "pm.test(\"Devuelve una lista\", () => pm.expect(j).to.be.an(\"array\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Registrar cliente",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/clientes",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"nombre\": \"Luis\",\n  \"apellido\": \"Ramos\",\n  \"dni\": \"{{dniNuevo}}\",\n  \"telefono\": \"912345678\",\n  \"correo\": \"luis.ramos@correo.pe\"\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      }
+     },
+     "event": [
+      {
+       "listen": "prerequest",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "const n = String(Date.now());",
+         "pm.collectionVariables.set(\"dniNuevo\", \"7\" + n.slice(-7));",
+         "pm.collectionVariables.set(\"sufijo\", n.slice(-6));"
+        ]
+       }
+      },
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 201\", () => pm.response.to.have.status(201));",
+         "const j = pm.response.json();",
+         "pm.collectionVariables.set(\"clienteNuevoId\", j.id);"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Buscar cliente por id",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": "{{baseUrl}}/api/clientes/{{clienteNuevoId}}",
+      "description": ""
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+         "const j = pm.response.json();",
+         "pm.test(\"Es el cliente registrado\", () => pm.expect(j.dni).to.eql(pm.collectionVariables.get(\"dniNuevo\")));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Actualizar cliente",
+     "request": {
+      "method": "PUT",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/clientes/{{clienteNuevoId}}",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"nombre\": \"Luis\",\n  \"apellido\": \"Ramos Díaz\",\n  \"dni\": \"{{dniNuevo}}\",\n  \"telefono\": \"912345678\",\n  \"correo\": \"luis.ramos@correo.pe\"\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+         "const j = pm.response.json();",
+         "pm.test(\"Guarda el apellido nuevo\", () => pm.expect(j.apellido).to.eql(\"Ramos Díaz\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "DNI duplicado → 409",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/clientes",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"nombre\": \"Otro\",\n  \"dni\": \"{{dniNuevo}}\"\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 409\", () => pm.response.to.have.status(409));",
+         "pm.test(\"El error explica el motivo\", () => pm.expect(pm.response.json().detail).to.be.a(\"string\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "DNI de 7 dígitos → 400",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/clientes",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"nombre\": \"Otro\",\n  \"dni\": \"1234567\"\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 400\", () => pm.response.to.have.status(400));",
+         "pm.test(\"El error explica el motivo\", () => pm.expect(pm.response.json().detail).to.be.a(\"string\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Cliente sin nombre → 400",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/clientes",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"apellido\": \"Sin nombre\"\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 400\", () => pm.response.to.have.status(400));",
+         "pm.test(\"El error explica el motivo\", () => pm.expect(pm.response.json().detail).to.be.a(\"string\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Cliente inexistente → 404",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": "{{baseUrl}}/api/clientes/999999",
+      "description": ""
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 404\", () => pm.response.to.have.status(404));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Eliminar cliente",
+     "request": {
+      "method": "DELETE",
+      "header": [],
+      "url": "{{baseUrl}}/api/clientes/{{clienteNuevoId}}",
+      "description": ""
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 204\", () => pm.response.to.have.status(204));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Eliminar cliente inexistente → 404",
+     "request": {
+      "method": "DELETE",
+      "header": [],
+      "url": "{{baseUrl}}/api/clientes/999999",
+      "description": ""
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 404\", () => pm.response.to.have.status(404));"
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "3. Categorías",
+   "item": [
+    {
+     "name": "Registrar categoría",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/categorias",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"nombre\": \"Abarrotes {{sufijo}}\",\n  \"descripcion\": \"Arroz, azúcar, aceite y menestras\"\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      }
+     },
+     "event": [
+      {
+       "listen": "prerequest",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "const n = String(Date.now());",
+         "pm.collectionVariables.set(\"dniNuevo\", \"7\" + n.slice(-7));",
+         "pm.collectionVariables.set(\"sufijo\", n.slice(-6));"
+        ]
+       }
+      },
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 201\", () => pm.response.to.have.status(201));",
+         "const j = pm.response.json();",
+         "pm.collectionVariables.set(\"categoriaId\", j.id);"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Listar categorías",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": "{{baseUrl}}/api/categorias",
+      "description": ""
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+         "const j = pm.response.json();",
+         "pm.test(\"Incluye la categoría registrada\", () => pm.expect(j.map(c => c.id)).to.include(Number(pm.collectionVariables.get(\"categoriaId\"))));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Buscar categoría por id",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": "{{baseUrl}}/api/categorias/{{categoriaId}}",
+      "description": ""
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Actualizar categoría",
+     "request": {
+      "method": "PUT",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/categorias/{{categoriaId}}",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"nombre\": \"Abarrotes {{sufijo}}\",\n  \"descripcion\": \"Productos secos de primera necesidad\"\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+         "const j = pm.response.json();",
+         "pm.test(\"Guarda la descripción nueva\", () => pm.expect(j.descripcion).to.include(\"primera necesidad\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Categoría duplicada → 409",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/categorias",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"nombre\": \"abarrotes {{sufijo}}\"\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 409\", () => pm.response.to.have.status(409));",
+         "pm.test(\"El error explica el motivo\", () => pm.expect(pm.response.json().detail).to.be.a(\"string\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Categoría sin nombre → 400",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/categorias",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"descripcion\": \"sin nombre\"\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 400\", () => pm.response.to.have.status(400));",
+         "pm.test(\"El error explica el motivo\", () => pm.expect(pm.response.json().detail).to.be.a(\"string\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Categoría inexistente → 404",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": "{{baseUrl}}/api/categorias/999999",
+      "description": ""
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 404\", () => pm.response.to.have.status(404));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Eliminar categoría",
+     "request": {
+      "method": "DELETE",
+      "header": [],
+      "url": "{{baseUrl}}/api/categorias/{{categoriaId}}",
+      "description": ""
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 204\", () => pm.response.to.have.status(204));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Eliminar categoría inexistente → 404",
+     "request": {
+      "method": "DELETE",
+      "header": [],
+      "url": "{{baseUrl}}/api/categorias/999999",
+      "description": ""
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 404\", () => pm.response.to.have.status(404));"
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "4. Autenticación",
+   "item": [
+    {
+     "name": "Registrar usuario",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/auth/registro",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"username\": \"cajero{{sufijo}}\",\n  \"password\": \"Clave123\",\n  \"nombre\": \"Ana Cajera\",\n  \"email\": \"cajero{{sufijo}}@tienda.pe\",\n  \"rol\": \"CAJERO\"\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      },
+      "auth": {
+       "type": "noauth"
+      }
+     },
+     "event": [
+      {
+       "listen": "prerequest",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "const n = String(Date.now());",
+         "pm.collectionVariables.set(\"dniNuevo\", \"7\" + n.slice(-7));",
+         "pm.collectionVariables.set(\"sufijo\", n.slice(-6));"
+        ]
+       }
+      },
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 201\", () => pm.response.to.have.status(201));",
+         "const j = pm.response.json();",
+         "pm.test(\"Asigna rol CAJERO\", () => pm.expect(j.rol).to.eql(\"CAJERO\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Iniciar sesión",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/auth/login",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"username\": \"cajero{{sufijo}}\",\n  \"password\": \"Clave123\"\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      },
+      "auth": {
+       "type": "noauth"
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+         "const j = pm.response.json();",
+         "pm.test(\"Devuelve usuario y rol\", () => pm.expect(j.username).to.eql(\"cajero\" + pm.collectionVariables.get(\"sufijo\")));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Usuario repetido → 409",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/auth/registro",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"username\": \"cajero{{sufijo}}\",\n  \"password\": \"Clave123\",\n  \"nombre\": \"Ana\",\n  \"email\": \"otro{{sufijo}}@tienda.pe\"\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      },
+      "auth": {
+       "type": "noauth"
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 409\", () => pm.response.to.have.status(409));",
+         "pm.test(\"El error explica el motivo\", () => pm.expect(pm.response.json().detail).to.be.a(\"string\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Contraseña corta → 400",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/auth/registro",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"username\": \"corta{{sufijo}}\",\n  \"password\": \"1\",\n  \"nombre\": \"Ana\",\n  \"email\": \"corta{{sufijo}}@tienda.pe\"\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      },
+      "auth": {
+       "type": "noauth"
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 400\", () => pm.response.to.have.status(400));",
+         "pm.test(\"El error explica el motivo\", () => pm.expect(pm.response.json().detail).to.be.a(\"string\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Contraseña incorrecta → 401",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/auth/login",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"username\": \"cajero{{sufijo}}\",\n  \"password\": \"mala\"\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      },
+      "auth": {
+       "type": "noauth"
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 401\", () => pm.response.to.have.status(401));",
+         "pm.test(\"El error explica el motivo\", () => pm.expect(pm.response.json().detail).to.be.a(\"string\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Login sin datos → 400",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/auth/login",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      },
+      "auth": {
+       "type": "noauth"
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 400\", () => pm.response.to.have.status(400));"
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "5. Ventas",
+   "item": [
+    {
+     "name": "Listar ventas (paginado)",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": "{{baseUrl}}/api/ventas?page=0&size=10&sort=fecha,desc",
+      "description": ""
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+         "const j = pm.response.json();",
+         "pm.test(\"Trae la lista y la paginación\", () => { pm.expect(j.content).to.be.an(\"array\"); pm.expect(j.page).to.have.property(\"totalElements\"); });"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Registrar venta sin cliente",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/ventas",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"items\": [\n    {\n      \"productoId\": {{productoArroz}},\n      \"cantidad\": 2\n    },\n    {\n      \"productoId\": {{productoLeche}},\n      \"cantidad\": 1\n    }\n  ]\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 201\", () => pm.response.to.have.status(201));",
+         "pm.test(\"Devuelve Location\", () => pm.response.to.have.header(\"Location\"));",
+         "const j = pm.response.json();",
+         "pm.test(\"Total calculado por el servidor: 2 x 4.50 + 4.20 = 13.20\", () => pm.expect(j.total).to.eql(13.20));",
+         "pm.collectionVariables.set(\"ventaId\", j.id);"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Registrar venta con cliente",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/ventas",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"clienteId\": {{clienteId}},\n  \"items\": [\n    {\n      \"productoId\": {{productoAceite}},\n      \"cantidad\": 1\n    }\n  ]\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 201\", () => pm.response.to.have.status(201));",
+         "const j = pm.response.json();",
+         "pm.test(\"Asociada al cliente\", () => pm.expect(j.cliente.id).to.eql(Number(pm.collectionVariables.get(\"clienteId\"))));",
+         "pm.collectionVariables.set(\"ventaConClienteId\", j.id);"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Buscar venta por id",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": "{{baseUrl}}/api/ventas/{{ventaConClienteId}}",
+      "description": ""
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+         "const j = pm.response.json();",
+         "pm.test(\"Trae cliente, total e items\", () => pm.expect(j).to.have.keys(\"id\",\"fecha\",\"cliente\",\"total\",\"items\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Venta inexistente → 404",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": "{{baseUrl}}/api/ventas/999999",
+      "description": ""
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 404\", () => pm.response.to.have.status(404));",
+         "pm.test(\"El error explica el motivo\", () => pm.expect(pm.response.json().detail).to.be.a(\"string\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Id no numérico → 400",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": "{{baseUrl}}/api/ventas/abc",
+      "description": ""
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 400\", () => pm.response.to.have.status(400));",
+         "pm.test(\"El error explica el motivo\", () => pm.expect(pm.response.json().detail).to.be.a(\"string\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Producto inexistente → 404",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/ventas",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"items\": [\n    {\n      \"productoId\": 999999,\n      \"cantidad\": 1\n    }\n  ]\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 404\", () => pm.response.to.have.status(404));",
+         "pm.test(\"El error explica el motivo\", () => pm.expect(pm.response.json().detail).to.be.a(\"string\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Cliente inexistente → 404",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/ventas",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"clienteId\": 999999,\n  \"items\": [\n    {\n      \"productoId\": {{productoArroz}},\n      \"cantidad\": 1\n    }\n  ]\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 404\", () => pm.response.to.have.status(404));",
+         "pm.test(\"El error explica el motivo\", () => pm.expect(pm.response.json().detail).to.be.a(\"string\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Stock insuficiente → 409",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/ventas",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"items\": [\n    {\n      \"productoId\": {{productoArroz}},\n      \"cantidad\": 1\n    },\n    {\n      \"productoId\": {{productoDetergente}},\n      \"cantidad\": 50\n    }\n  ]\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 409\", () => pm.response.to.have.status(409));",
+         "pm.test(\"El error explica el motivo\", () => pm.expect(pm.response.json().detail).to.be.a(\"string\"));",
+         "pm.test(\"Indica el stock disponible\", () => pm.expect(pm.response.json().detail).to.include(\"disponible\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Cantidad negativa → 400",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/ventas",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"items\": [\n    {\n      \"productoId\": {{productoArroz}},\n      \"cantidad\": -5\n    }\n  ]\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 400\", () => pm.response.to.have.status(400));",
+         "pm.test(\"Indica el campo con error\", () => pm.expect(pm.response.json().errores.join()).to.include(\"cantidad\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Venta sin productos → 400",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/ventas",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"items\": []\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 400\", () => pm.response.to.have.status(400));",
+         "pm.test(\"El error explica el motivo\", () => pm.expect(pm.response.json().detail).to.be.a(\"string\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "JSON mal formado → 400",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/ventas",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\"items\": [",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 400\", () => pm.response.to.have.status(400));",
+         "pm.test(\"El error explica el motivo\", () => pm.expect(pm.response.json().detail).to.be.a(\"string\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Id y total falsos se ignoran",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/ventas",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"id\": 1,\n  \"total\": 0.01,\n  \"items\": [{\"productoId\": {{productoArroz}}, \"cantidad\": 1}]\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 201\", () => pm.response.to.have.status(201));",
+         "const j = pm.response.json();",
+         "pm.test(\"El total lo calcula el servidor\", () => pm.expect(j.total).to.eql(4.50));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Página gigante → máximo 100",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": "{{baseUrl}}/api/ventas?size=5000",
+      "description": ""
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+         "pm.test(\"Limita la página a 100\", () => pm.expect(pm.response.json().page.size).to.eql(100));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Editar venta (PUT) → 405",
+     "request": {
+      "method": "PUT",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/ventas/{{ventaId}}",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"items\": []\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 405\", () => pm.response.to.have.status(405));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Eliminar producto con ventas → 409",
+     "request": {
+      "method": "DELETE",
+      "header": [],
+      "url": "{{baseUrl}}/api/productos/{{productoArroz}}",
+      "description": "El arroz tiene ventas registradas: la base de datos protege la integridad."
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 409\", () => pm.response.to.have.status(409));",
+         "pm.test(\"El error explica el motivo\", () => pm.expect(pm.response.json().detail).to.be.a(\"string\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Anular venta → 204",
+     "request": {
+      "method": "DELETE",
+      "header": [],
+      "url": "{{baseUrl}}/api/ventas/{{ventaId}}",
+      "description": ""
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 204\", () => pm.response.to.have.status(204));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Venta anulada ya no existe → 404",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": "{{baseUrl}}/api/ventas/{{ventaId}}",
+      "description": ""
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 404\", () => pm.response.to.have.status(404));"
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "6. Seguridad (JWT y roles)",
+   "item": [
+    {
+     "name": "Sin token → 401",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": "{{baseUrl}}/api/productos",
+      "description": "",
+      "auth": {
+       "type": "noauth"
+      }
+     },
+     "event": [
+      {
+       "listen": "prerequest",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "const n = String(Date.now()); pm.collectionVariables.set(\"sufijo\", n.slice(-6));",
+         "const t = pm.collectionVariables.get(\"token\") || \"\"; pm.collectionVariables.set(\"tokenAlterado\", t.slice(0, -3) + \"abc\");"
+        ]
+       }
+      },
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 401\", () => pm.response.to.have.status(401));",
+         "pm.test(\"Mensaje de autenticación\", () => pm.expect(pm.response.json().detail).to.include(\"autenticación\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Token alterado → 401",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": "{{baseUrl}}/api/productos",
+      "description": "Se cambia la firma del token válido: el servidor la rechaza.",
+      "auth": {
+       "type": "bearer",
+       "bearer": [
+        {
+         "key": "token",
+         "value": "{{tokenAlterado}}",
+         "type": "string"
+        }
+       ]
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 401\", () => pm.response.to.have.status(401));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Registrar cajero (siempre CAJERO)",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/auth/registro",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"username\": \"cajero{{sufijo}}\",\n  \"password\": \"Clave123\",\n  \"nombre\": \"Ana Cajera\",\n  \"email\": \"cajero{{sufijo}}@tienda.pe\",\n  \"rol\": \"ADMINISTRADOR\"\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      },
+      "auth": {
+       "type": "noauth"
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 201\", () => pm.response.to.have.status(201));",
+         "pm.test(\"Aunque pida ADMINISTRADOR, se crea CAJERO\", () => pm.expect(pm.response.json().rol).to.eql(\"CAJERO\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Login cajero (guarda token)",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/auth/login",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"username\": \"cajero{{sufijo}}\",\n  \"password\": \"Clave123\"\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      },
+      "auth": {
+       "type": "noauth"
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+         "pm.collectionVariables.set(\"tokenCajero\", pm.response.json().accessToken);"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Cajero lista productos → 200",
+     "request": {
+      "method": "GET",
+      "header": [],
+      "url": "{{baseUrl}}/api/productos",
+      "description": "",
+      "auth": {
+       "type": "bearer",
+       "bearer": [
+        {
+         "key": "token",
+         "value": "{{tokenCajero}}",
+         "type": "string"
+        }
+       ]
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Cajero crea producto → 403",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/productos",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"nombre\": \"No permitido\",\n  \"precio\": 1,\n  \"stock\": 1\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      },
+      "auth": {
+       "type": "bearer",
+       "bearer": [
+        {
+         "key": "token",
+         "value": "{{tokenCajero}}",
+         "type": "string"
+        }
+       ]
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 403\", () => pm.response.to.have.status(403));",
+         "pm.test(\"Mensaje de permisos\", () => pm.expect(pm.response.json().detail).to.include(\"permisos\"));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Cajero borra categoría → 403",
+     "request": {
+      "method": "DELETE",
+      "header": [],
+      "url": "{{baseUrl}}/api/categorias/1",
+      "description": "",
+      "auth": {
+       "type": "bearer",
+       "bearer": [
+        {
+         "key": "token",
+         "value": "{{tokenCajero}}",
+         "type": "string"
+        }
+       ]
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 403\", () => pm.response.to.have.status(403));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Cajero registra venta → 201",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/ventas",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"items\": [\n    {\n      \"productoId\": {{productoLeche}},\n      \"cantidad\": 1\n    }\n  ]\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      },
+      "auth": {
+       "type": "bearer",
+       "bearer": [
+        {
+         "key": "token",
+         "value": "{{tokenCajero}}",
+         "type": "string"
+        }
+       ]
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 201\", () => pm.response.to.have.status(201));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Registro con idUsuario de otro no lo sobrescribe",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/auth/registro",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"idUsuario\": 1,\n  \"username\": \"otro{{sufijo}}\",\n  \"password\": \"Clave123\",\n  \"nombre\": \"Otro\",\n  \"email\": \"otro{{sufijo}}@tienda.pe\"\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      },
+      "auth": {
+       "type": "noauth"
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 201\", () => pm.response.to.have.status(201));",
+         "pm.test(\"Recibe un id nuevo, distinto de 1\", () => pm.expect(pm.response.json().idUsuario === 1).to.eql(false));"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "name": "Login admin sigue funcionando",
+     "request": {
+      "method": "POST",
+      "header": [
+       {
+        "key": "Content-Type",
+        "value": "application/json"
+       }
+      ],
+      "url": "{{baseUrl}}/api/auth/login",
+      "description": "",
+      "body": {
+       "mode": "raw",
+       "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"{{adminPassword}}\"\n}",
+       "options": {
+        "raw": {
+         "language": "json"
+        }
+       }
+      },
+      "auth": {
+       "type": "noauth"
+      }
+     },
+     "event": [
+      {
+       "listen": "test",
+       "script": {
+        "type": "text/javascript",
+        "exec": [
+         "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));"
+        ]
+       }
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "variable": [
+  {
+   "key": "baseUrl",
+   "value": "http://localhost:8080"
+  },
+  {
+   "key": "productoArroz",
+   "value": "1"
+  },
+  {
+   "key": "productoAceite",
+   "value": "3"
+  },
+  {
+   "key": "productoLeche",
+   "value": "4"
+  },
+  {
+   "key": "productoDetergente",
+   "value": "8"
+  },
+  {
+   "key": "clienteId",
+   "value": "1"
+  },
+  {
+   "key": "dniNuevo",
+   "value": ""
+  },
+  {
+   "key": "sufijo",
+   "value": ""
+  },
+  {
+   "key": "productoNuevoId",
+   "value": ""
+  },
+  {
+   "key": "clienteNuevoId",
+   "value": ""
+  },
+  {
+   "key": "categoriaId",
+   "value": ""
+  },
+  {
+   "key": "ventaId",
+   "value": ""
+  },
+  {
+   "key": "ventaConClienteId",
+   "value": ""
+  },
+  {
+   "key": "token",
+   "value": ""
+  },
+  {
+   "key": "tokenCajero",
+   "value": ""
+  },
+  {
+   "key": "tokenAlterado",
+   "value": ""
+  },
+  {
+   "key": "adminPassword",
+   "value": "Admin123"
+  }
+ ],
+ "auth": {
+  "type": "bearer",
+  "bearer": [
+   {
+    "key": "token",
+    "value": "{{token}}",
+    "type": "string"
+   }
+  ]
+ }
+}

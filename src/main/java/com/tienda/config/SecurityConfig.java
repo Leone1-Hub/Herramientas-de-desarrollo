@@ -71,12 +71,16 @@ public class SecurityConfig {
                                 "/favicon.ico",
                                 "/error"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/registro").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/registro", "/api/v1/auth/login", "/api/v1/auth/registro").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/productos", "/api/productos/**", "/api/categorias", "/api/categorias/**").hasRole("ADMINISTRADOR")
-                        .requestMatchers(HttpMethod.PUT, "/api/productos", "/api/productos/**", "/api/categorias", "/api/categorias/**").hasRole("ADMINISTRADOR")
-                        .requestMatchers(HttpMethod.DELETE, "/api/productos", "/api/productos/**", "/api/categorias", "/api/categorias/**").hasRole("ADMINISTRADOR")
-                        .requestMatchers("/api/ventas", "/api/ventas/**", "/api/clientes", "/api/clientes/**").hasAnyRole("ADMINISTRADOR", "CAJERO")
+                        .requestMatchers(HttpMethod.POST, "/api/productos", "/api/productos/**", "/api/categorias", "/api/categorias/**",
+                                "/api/v1/productos", "/api/v1/productos/**", "/api/v1/categorias", "/api/v1/categorias/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.PUT, "/api/productos", "/api/productos/**", "/api/categorias", "/api/categorias/**",
+                                "/api/v1/productos", "/api/v1/productos/**", "/api/v1/categorias", "/api/v1/categorias/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/api/productos", "/api/productos/**", "/api/categorias", "/api/categorias/**",
+                                "/api/v1/productos", "/api/v1/productos/**", "/api/v1/categorias", "/api/v1/categorias/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers("/api/ventas", "/api/ventas/**", "/api/clientes", "/api/clientes/**",
+                                "/api/v1/ventas", "/api/v1/ventas/**", "/api/v1/clientes", "/api/v1/clientes/**").hasAnyRole("ADMINISTRADOR", "CAJERO")
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().authenticated()
                 )

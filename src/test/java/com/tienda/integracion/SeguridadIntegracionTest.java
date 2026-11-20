@@ -106,6 +106,25 @@ class SeguridadIntegracionTest {
     }
 
     @Test
+    void rutasV1_tienenLaMismaSeguridad() throws Exception {
+        mvc.perform(get("/api/v1/productos")).andExpect(status().isUnauthorized());
+
+        String cajero = "Bearer " + registrarCajero("cajero_v1");
+        mvc.perform(get("/api/v1/productos").header("Authorization", cajero)).andExpect(status().isOk());
+        mvc.perform(post("/api/v1/productos").header("Authorization", cajero).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"nombre\":\"x\",\"precio\":1,\"stock\":1}"))
+                .andExpect(status().isForbidden());
+        mvc.perform(put("/api/v1/categorias/1").header("Authorization", cajero).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"nombre\":\"x\"}"))
+                .andExpect(status().isForbidden());
+        mvc.perform(delete("/api/v1/productos/1").header("Authorization", cajero)).andExpect(status().isForbidden());
+
+        mvc.perform(post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"username\":\"admin\",\"password\":\"Admin123\"}"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     void frontYEndpointsDeAuth_sonPublicos() throws Exception {
         mvc.perform(get("/login.html")).andExpect(status().isOk());
         mvc.perform(post("/api/auth/registro").contentType(MediaType.APPLICATION_JSON).content("{}"))

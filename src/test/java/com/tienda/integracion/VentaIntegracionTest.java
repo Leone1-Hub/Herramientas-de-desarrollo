@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import java.util.List;
+import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -37,8 +38,8 @@ class VentaIntegracionTest {
 
     @BeforeEach
     void crearProductos() {
-        arroz = productos.save(new Producto("Arroz test", "Abarrotes", 4.50, 10));
-        detergente = productos.save(new Producto("Detergente test", "Limpieza", 11.50, 3));
+        arroz = productos.save(new Producto("Arroz test", "Abarrotes", new BigDecimal("4.50"), 10));
+        detergente = productos.save(new Producto("Detergente test", "Limpieza", new BigDecimal("11.50"), 3));
     }
 
     @AfterEach

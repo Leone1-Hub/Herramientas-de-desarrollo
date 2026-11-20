@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,7 +31,7 @@ class ProductoServiceTest {
 
     @Test
     void listar_devuelveLosProductos() {
-        when(repository.findAll()).thenReturn(List.of(new Producto("Arroz", "Abarrotes", 4.5, 10)));
+        when(repository.findAll()).thenReturn(List.of(new Producto("Arroz", "Abarrotes", new BigDecimal("4.5"), 10)));
 
         assertThat(service.listarProductos()).hasSize(1);
     }
@@ -45,7 +46,7 @@ class ProductoServiceTest {
 
     @Test
     void crear_ignoraElIdEnviadoYGuarda() {
-        Producto p = new Producto("Pan", "Panadería", 8.9, 25);
+        Producto p = new Producto("Pan", "Panadería", new BigDecimal("8.9"), 25);
         p.setId(1L);
         when(repository.save(any(Producto.class))).thenAnswer(inv -> inv.getArgument(0));
 
@@ -54,14 +55,14 @@ class ProductoServiceTest {
 
     @Test
     void crear_sinNombre_400() {
-        assertThatThrownBy(() -> service.crearProducto(new Producto(" ", null, 1.0, 1)))
+        assertThatThrownBy(() -> service.crearProducto(new Producto(" ", null, BigDecimal.ONE, 1)))
                 .satisfies(e -> assertThat(estado(e)).isEqualTo(HttpStatus.BAD_REQUEST))
                 .hasMessageContaining("nombre");
     }
 
     @Test
     void crear_precioNegativo_400() {
-        assertThatThrownBy(() -> service.crearProducto(new Producto("Pan", null, -1.0, 1)))
+        assertThatThrownBy(() -> service.crearProducto(new Producto("Pan", null, new BigDecimal("-1"), 1)))
                 .hasMessageContaining("precio");
     }
 
@@ -73,7 +74,7 @@ class ProductoServiceTest {
 
     @Test
     void crear_stockNegativo_400() {
-        assertThatThrownBy(() -> service.crearProducto(new Producto("Pan", null, 1.0, -5)))
+        assertThatThrownBy(() -> service.crearProducto(new Producto("Pan", null, BigDecimal.ONE, -5)))
                 .hasMessageContaining("stock");
         verify(repository, never()).save(any());
     }
@@ -86,14 +87,14 @@ class ProductoServiceTest {
 
     @Test
     void actualizar_modificaLosDatos() {
-        Producto actual = new Producto("Pan", "Panadería", 8.9, 25);
+        Producto actual = new Producto("Pan", "Panadería", new BigDecimal("8.9"), 25);
         when(repository.findById(1L)).thenReturn(Optional.of(actual));
         when(repository.save(actual)).thenReturn(actual);
 
-        Producto r = service.actualizarProducto(1L, new Producto("Pan integral", "Panadería", 9.5, 30));
+        Producto r = service.actualizarProducto(1L, new Producto("Pan integral", "Panadería", new BigDecimal("9.5"), 30));
 
         assertThat(r.getNombre()).isEqualTo("Pan integral");
-        assertThat(r.getPrecio()).isEqualTo(9.5);
+        assertThat(r.getPrecio()).isEqualByComparingTo("9.5");
         assertThat(r.getStock()).isEqualTo(30);
     }
 
@@ -101,7 +102,7 @@ class ProductoServiceTest {
     void actualizar_inexistente_404() {
         when(repository.findById(9L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.actualizarProducto(9L, new Producto("Pan", null, 1.0, 1)))
+        assertThatThrownBy(() -> service.actualizarProducto(9L, new Producto("Pan", null, BigDecimal.ONE, 1)))
                 .satisfies(e -> assertThat(estado(e)).isEqualTo(HttpStatus.NOT_FOUND));
     }
 

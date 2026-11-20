@@ -1,10 +1,11 @@
-# Multi-stage Dockerfile for the ConfigServer Spring Boot app (Java 21)
+# Multi-stage Dockerfile for the Tienda Spring Boot app (Java 21)
 
 # Build stage: compile with Maven + Temurin JDK 21
 FROM eclipse-temurin:21-jdk AS build
 WORKDIR /workspace
 COPY . .
-RUN ./mvnw clean package -DskipTests
+# En Windows git guarda mvnw con CRLF y sin permiso de ejecucion: se normaliza aqui
+RUN sed -i 's/\r$//' mvnw && chmod +x mvnw && ./mvnw clean package -DskipTests
 
 # Runtime stage: lightweight Temurin JRE 21
 FROM eclipse-temurin:21-jre AS runtime
